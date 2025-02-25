@@ -1,0 +1,45 @@
+services:
+  api_service:
+    env_file:
+      - .env
+    build:
+      context: .
+    image: example/example_service:latest
+    container_name: example_service
+    ports:
+      - 8000:8000
+      - 5678:5678
+    depends_on:
+      - db_service
+    volumes:
+      - ./api:/app/api
+      - .env:/app/.env
+    networks:
+      - example_network
+
+  db_service:
+    image: postgres:13
+    container_name: example_postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - example_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U example_user -d example_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  example_network:
+    driver: bridge

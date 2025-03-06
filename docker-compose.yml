@@ -1,25 +1,25 @@
 services:
-  api_service:
+  after_api_service:
     env_file:
       - .env
     build:
       context: .
-    image: example/example_service:latest
-    container_name: example_service
+    image: after/after_service:latest
+    container_name: after_api_service
     ports:
       - 8000:8000
       - 5678:5678
     depends_on:
-      - db_service
+      - after_db_local
     volumes:
       - ./api:/app/api
-      - .env:/app/.env
+      - ./alembic/versions:/app/alembic/versions
     networks:
-      - example_network
+      - after_network
 
-  db_service:
+  after_db_local:
     image: postgres:13
-    container_name: example_postgres
+    container_name: after_db_local
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -27,19 +27,19 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - after_postgres_data:/var/lib/postgresql/data
     networks:
-      - example_network
+      - after_network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U example_user -d example_db" ]
+      test: [ "CMD-SHELL", "pg_isready -U after -d after_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
 volumes:
-  postgres_data:
+  after_postgres_data:
     driver: local
 
 networks:
-  example_network:
+  after_network:
     driver: bridge

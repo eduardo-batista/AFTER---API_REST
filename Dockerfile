@@ -6,9 +6,11 @@ ENV PYTHONIOENCODING=UTF-8
 ENV APP_HOME=/app
 
 WORKDIR $APP_HOME
-COPY . .
 
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 
+COPY . .
+
 RUN chmod +x entrypoint.sh
-CMD  [ "/bin/sh", "entrypoint.sh"]
+ENTRYPOINT [ "/bin/sh", "entrypoint.sh"]

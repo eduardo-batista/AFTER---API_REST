@@ -25,9 +25,9 @@ def upgrade():
         sa.Column('name', sa.String(50), nullable=False),
         sa.Column('description', sa.String(255), nullable=True),
         sa.Column('identification_document', sa.String(20), nullable=False, unique=True),
-        sa.Column('email', sa.String(255), nullable=False, unique=True),
+        sa.Column('email', sa.String(20), nullable=False, unique=True),
         sa.Column('fone', sa.String(20), nullable=True),
-        sa.Column('profile_type', sa.String(5), nullable=False),
+        sa.Column('profile_type', sa.Enum('user', 'admin', name='profile_type_enum'), nullable=False),
         sa.Column('status', sa.Boolean, nullable=False, server_default='TRUE'),
         sa.Column('created_at', sa.TIMESTAMP, server_default=sa.text('CURRENT_TIMESTAMP')),
         sa.Column('updated_at', sa.TIMESTAMP, server_default=sa.text('CURRENT_TIMESTAMP'), onupdate=sa.text('CURRENT_TIMESTAMP'))
@@ -35,3 +35,4 @@ def upgrade():
 
 def downgrade():
     op.drop_table('users')
+    op.execute('DROP TYPE profile_type_enum')

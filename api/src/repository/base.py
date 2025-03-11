@@ -97,19 +97,44 @@ class BaseRepository(Generic[T]):
             )
             result = await session.execute(query)
             obj = result.scalars().first()
+            print(obj)
 
             if not obj:
                 raise HTTPException(404, f'Não foi encontrado um registro com ID: {entity_id}.')
 
             for key, value in obj_in.to_dict().items():
-                if key != self.primary_key_name:
+                if key != self.primary_key_name and value:
                     setattr(obj, key, value)
             await session.commit()
             return obj
 
+    async def soft_delete(self, entity_id: int) -> None:
+        """
+        Deactivate an object based on the provided ID.
+
+        Args:
+        - entity_id (int): The ID of the object to delete.
+
+        Returns:
+        - No content.
+        """
+        async with self.get_session() as session:
+            query = select(self.entity).filter(
+                getattr(self.entity, self.primary_key_name) == entity_id
+            )
+            result = await session.execute(query)
+            obj = result.scalars().first()
+
+            if not obj:
+                raise HTTPException(404, f'Não foi encontrado um registro com ID: {entity_id}.')
+
+            if obj:
+                obj.status = False
+                await session.commit()
+
     async def delete(self, entity_id: int) -> None:
         """
-        Deletes an object based on the provided ID.
+        Destroy an object based on the provided ID.
 
         Args:
         - entity_id (int): The ID of the object to delete.

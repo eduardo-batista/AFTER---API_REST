@@ -10,10 +10,29 @@ from api.src.model.schema.base import BaseSchema
 class UserSchema(BaseSchema):
     """class for user schema."""
 
-    user_field: str = Field(...,
-        title='Campo de Exemplo',
-        description='Campo de Exemplo para fins didáticos'
+    name: str = Field(...,
+        title='Nome do Usuário', 
+    )
+    description: str = Field(...,
+        title='Descrição do Usuário'
+    )
+    identification_document: str = Field(...,
+        title='CPF ou CNPJ do usuário'
+    )
+    email: str = Field(...,
+        title='Email do usuário'
+    )
+    fone: str = Field(...,
+        title='Telefone do usuário'
+    )
+    profile_type: str = Field(...,
+        title='Tipo de Perfil do usuário'
     )
 
     def __get_entity__(self) -> User:
-        return User(user_field=self.user_field)
+        return User(name=self.name,
+                    description=self.description,
+                    identification_document=self.identification_document,
+                    email=self.email,
+                    fone=self.fone,
+                    profile_type=self.profile_type)

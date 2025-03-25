@@ -17,11 +17,8 @@ class User(BaseEntity):
     email = Column(String(20), nullable=False, unique=True)
     fone = Column(String(20), nullable=True)
     profile_type = Column(Enum('user', 'admin', name='profile_type_enum'), nullable=False)
-    status = Column(Boolean, nullable=False, server_default='TRUE')
-    created_at = Column(TIMESTAMP, server_default=text('CURRENT_TIMESTAMP'))
-    updated_at = Column(TIMESTAMP, server_default=text('CURRENT_TIMESTAMP'), onupdate=text('CURRENT_TIMESTAMP'))
 
-    def __init__(self, name, description, identification_document, email, fone, profile_type):
+    def __init__(self, name = None, description = None, identification_document = None, email = None, fone = None, profile_type = None):
         self.name = name
         self.description = description
         self.identification_document = identification_document
@@ -37,6 +34,6 @@ class User(BaseEntity):
                 email=({self.email}), \
                 fone=({self.fone}), \
                 profile_type=({self.profile_type}), \
-                email=({self.status}), \
+                email=({self.active}), \
                 fone=({self.created_at}), \
                 profile_type=({self.updated_at})>"

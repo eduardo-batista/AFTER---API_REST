@@ -28,7 +28,7 @@ def upgrade():
         sa.Column('email', sa.String(20), nullable=False, unique=True),
         sa.Column('fone', sa.String(20), nullable=True),
         sa.Column('profile_type', sa.Enum('user', 'admin', name='profile_type_enum'), nullable=False),
-        sa.Column('status', sa.Boolean, nullable=False, server_default='TRUE'),
+        sa.Column('active', sa.Boolean, nullable=False, server_default='TRUE'),
         sa.Column('created_at', sa.TIMESTAMP, server_default=sa.text('CURRENT_TIMESTAMP')),
         sa.Column('updated_at', sa.TIMESTAMP, server_default=sa.text('CURRENT_TIMESTAMP'), onupdate=sa.text('CURRENT_TIMESTAMP'))
     )

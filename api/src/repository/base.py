@@ -60,7 +60,7 @@ class BaseRepository(Generic[T]):
         Returns:
         - List of objects.
         """
-        query = select(self.entity)
+        query = select(self.entity).where(self.entity.active == True)
         async with self.get_session() as session:
             result = await session.execute(query)
             return result.scalars().all()
@@ -97,7 +97,6 @@ class BaseRepository(Generic[T]):
             )
             result = await session.execute(query)
             obj = result.scalars().first()
-            print(obj)
 
             if not obj:
                 raise HTTPException(404, f'Não foi encontrado um registro com ID: {entity_id}.')
@@ -129,7 +128,7 @@ class BaseRepository(Generic[T]):
                 raise HTTPException(404, f'Não foi encontrado um registro com ID: {entity_id}.')
 
             if obj:
-                obj.status = False
+                obj.active = False
                 await session.commit()
 
     async def delete(self, entity_id: int) -> None:

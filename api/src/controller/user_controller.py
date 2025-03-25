@@ -6,7 +6,7 @@ This module contains the default REST structure of controllers for a CRUD user o
 from typing import Sequence
 from fastapi import APIRouter, status
 
-from api.src.model.schema.user_schema import UserResponse, UserRequest
+from api.src.model.schema.user_schema import UpdateUserRequest, UserResponse, CreateUserRequest
 from api.src.service.user_service import UserService
 
 user_router = APIRouter(prefix='/user')
@@ -26,13 +26,13 @@ async def get_all() -> Sequence[UserResponse]:
 
 # POST /user
 @user_router.post('/', status_code=status.HTTP_201_CREATED)
-async def create(user_request: UserRequest) -> UserResponse:
+async def create(user_request: CreateUserRequest) -> UserResponse:
     """Creates a new 'User' object with the provided data."""
     return await service.create(user_request.__get_entity__())
 
 # PUT /user/{user_id}
 @user_router.put('/{user_id}', status_code=status.HTTP_200_OK)
-async def update(user_request: UserRequest, user_id: int) -> UserResponse:
+async def update(user_request: UpdateUserRequest, user_id: int) -> UserResponse:
     """Updates an existing 'User' object with the provided data."""
     return await service.update(user_request.__get_entity__(), user_id)
 

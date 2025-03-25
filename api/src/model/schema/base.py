@@ -3,13 +3,10 @@ Base Schema Module
 
 This module defines the base class for all schemas.
 """
-from typing import Optional
 from pydantic import BaseModel
 
 class BaseSchema(BaseModel):
     """Base class for all schemas."""
-
-    id: Optional[int] = None
 
     def __get_entity__(self):
         raise NotImplementedError(
@@ -17,7 +14,9 @@ class BaseSchema(BaseModel):
         )
 
     def __repr__(self):
-        return f"<Schema(id={self.id}>"
+        raise NotImplementedError(
+            f"{self.__class__.__name__} must implement '__repr__' method"
+        )
 
     # pylint: disable=too-few-public-methods
     class Config:

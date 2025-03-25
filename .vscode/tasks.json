@@ -4,14 +4,17 @@
         {
             "label": "Run Lint",
             "type": "shell",
-            "command": "docker exec example_service bash -c 'pylint ./api'",
+            "command": "docker exec after_api_service bash -c 'pylint ./api'",
             "presentation": {
                 "reveal": "always",
                 "panel": "new"
             },
             "problemMatcher": {
                 "owner": "python",
-                "fileLocation": ["relative", "${workspaceFolder}"],
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}"
+                ],
                 "pattern": {
                     "regexp": "^(.+):(\\d+):(\\d+): (([A-Z]\\d{4}): )?(.+)$",
                     "file": 1,

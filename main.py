@@ -6,11 +6,11 @@ This module contains the main logic of the application.
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
-from api.src.controller.example_controller import example_router
+from api.src.controller.user_controller import user_router
 
 app = FastAPI()
 
-app.include_router(example_router)
+app.include_router(user_router)
 
 app.add_middleware(
     CORSMiddleware,

@@ -82,4 +82,4 @@ class BaseService(Generic[R, T, S]):
         Returns:
         - No content.
         """
-        return await self.repository.delete(entity_id)
+        return await self.repository.soft_delete(entity_id)

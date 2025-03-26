@@ -4,6 +4,7 @@ Base Service Repository
 This Repository defines the base class for all services.
 """
 from typing import Generic, Sequence, Type, TypeVar
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.src.model.entity.base import BaseEntity
 from api.src.model.schema.base import BaseSchema
@@ -20,7 +21,7 @@ class BaseService(Generic[R, T, S]):
         self.repository = repository(entity)
         self.schema = schema
 
-    async def get(self, entity_id: int) -> S | None:
+    async def get(self, entity_id: int, session: AsyncSession) -> S | None:
         """
         Retrieves an object based on the provided ID.
 
@@ -30,22 +31,22 @@ class BaseService(Generic[R, T, S]):
         Returns:
         - The object with the provided ID.
         """
-        entity = await self.repository.get(entity_id)
+        entity = await self.repository.get(entity_id, session)
         if entity is None:
             return None
         return self.schema.model_validate(entity)
 
-    async def get_all(self) -> Sequence[S]:
+    async def get_all(self, session: AsyncSession) -> Sequence[S]:
         """
         Retrieves all objects.
 
         Returns:
         - List of objects.
         """
-        entities = await self.repository.get_all()
+        entities = await self.repository.get_all(session)
         return [self.schema.model_validate(entity) for entity in entities]
 
-    async def create(self, obj_in: T) -> S:
+    async def create(self, obj_in: T, session: AsyncSession) -> S:
         """
         Creates a new object with the provided data.
 
@@ -55,10 +56,10 @@ class BaseService(Generic[R, T, S]):
         Returns:
         - The newly created object.
         """
-        entity = await self.repository.create(obj_in)
+        entity = await self.repository.create(obj_in, session)
         return self.schema.model_validate(entity)
 
-    async def update(self, obj_in: T, entity_id: int) -> S:
+    async def update(self, obj_in: T, entity_id: int, session: AsyncSession) -> S:
         """
         Updates an existing object with the provided data.
 
@@ -69,10 +70,10 @@ class BaseService(Generic[R, T, S]):
         Returns:
         - The updated object.
         """
-        entity = await self.repository.update(obj_in, entity_id)
+        entity = await self.repository.update(obj_in, entity_id, session)
         return self.schema.model_validate(entity)
 
-    async def delete(self, entity_id: int) -> None:
+    async def delete(self, entity_id: int, session: AsyncSession) -> None:
         """
         Deletes an object based on the provided ID.
 
@@ -82,4 +83,4 @@ class BaseService(Generic[R, T, S]):
         Returns:
         - No content.
         """
-        return await self.repository.soft_delete(entity_id)
+        return await self.repository.soft_delete(entity_id, session)

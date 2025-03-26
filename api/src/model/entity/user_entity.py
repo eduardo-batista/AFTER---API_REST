@@ -3,7 +3,7 @@ user_entity.py
 
 This module defines the sqlalchemy class for user entity.
 """
-from sqlalchemy import TIMESTAMP, Boolean, Column, Enum, String, text
+from sqlalchemy import Column, Enum, String
 from .base import BaseEntity
 
 class User(BaseEntity):

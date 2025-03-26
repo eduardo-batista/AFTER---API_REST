@@ -55,3 +55,24 @@ class DatabaseConfig:
         """Create and return an async session factory."""
         engine = self.get_async_engine()
         return async_sessionmaker(bind=engine, autoflush=True, expire_on_commit=False)
+    
+    async def get_session(self):
+        """
+        Provides an asynchronous context manager for a database session.
+
+        This method creates and yields a session object, ensuring that the session 
+        is properly closed after usage, even if an exception occurs.
+
+        Yields:
+            AsyncSession: The session object used for database operations.
+
+        Example:
+            async with get_session() as session:
+                # Perform database operations
+        """
+        session_factory = self.get_async_session_local()
+        session = session_factory()
+        try:
+            yield session
+        finally:
+            await session.close()

@@ -1,6 +1,6 @@
 import jwt
 import bcrypt
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 import os
 
@@ -16,14 +16,14 @@ class Auth:
         return None
 
     @staticmethod
-    def verify_password(password: str, hashed_password: str) -> bool:
+    async def verify_password(password: str, hashed_password: str) -> bool:
         return bcrypt.checkpw(password.encode(), hashed_password.encode())
 
     @staticmethod
     def create_access_token(user_id: int):
         payload = {
             "sub": user_id,
-            "exp": datetime.now()
+            "exp": datetime.now(timezone.utc) + timedelta(hours=1)
         }
         return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 

@@ -76,6 +76,7 @@ class BaseRepository(Generic[T]):
         
         session.add(obj_in)
         await session.commit()
+        await session.refresh(obj_in)
         return obj_in
 
     async def update(self, obj_in: T, entity_id: int, session: AsyncSession) -> T:
@@ -103,6 +104,7 @@ class BaseRepository(Generic[T]):
             if key != self.primary_key_name and value:
                 setattr(obj, key, value)
         await session.commit()
+        await session.refresh(obj)
         return obj
 
     async def soft_delete(self, entity_id: int, session: AsyncSession) -> None:

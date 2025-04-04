@@ -7,16 +7,31 @@ from typing import Sequence
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.src.model.schema.user_schema import UpdateUserRequest, UserResponse, CreateUserRequest
-
 from api.database.database import DatabaseConfig
-from api.src.model.schema.user_schema import UpdateUserRequest, UserResponse, CreateUserRequest
-
+from api.src.model.schema.user_schema import CreateUserAuthRequest, UpdateUserRequest, UserLoginRequest, UserResponse, CreateUserRequest
 from api.src.service.user_service import UserService
 
 user_router = APIRouter(prefix='/user')
 database_config = DatabaseConfig()
 service = UserService()
+
+# POST /login
+@user_router.post('/login', status_code=status.HTTP_201_CREATED)
+async def login(
+        user_login_request: UserLoginRequest, 
+        session: AsyncSession = Depends(database_config.get_session)
+    ):
+    """Authenticate user on the plataform."""
+    return await service.login(user_login_request, session)
+
+# POST /register
+@user_router.post('/register', status_code=status.HTTP_201_CREATED)
+async def register(
+        user_auth_request: CreateUserAuthRequest, 
+        session: AsyncSession = Depends(database_config.get_session)
+    ):
+    """Creates a new 'User Auth' and 'User' object with the provided data."""
+    return await service.register(user_auth_request.__get_entity__(), session)
 
 # GET /user/{user_id}
 @user_router.get('/{user_id}', status_code=status.HTTP_200_OK)

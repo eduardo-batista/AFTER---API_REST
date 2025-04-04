@@ -21,5 +21,4 @@ class UserService(BaseService[UserRepository, User, UserResponse]):
         return self.repository.login(user_login_request, session)
     
     async def register(self, user_auth: UserAuth, session: AsyncSession):
-        user_auth.user = await self.repository.create(user_auth.user, session)
-        return self.repository.register(user_auth, session)
+        return await self.repository.create(user_auth.user, session)

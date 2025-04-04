@@ -36,6 +36,5 @@ class User(BaseEntity):
                 email=({self.email}), \
                 fone=({self.fone}), \
                 profile_type=({self.profile_type}), \
-                email=({self.active}), \
                 fone=({self.created_at}), \
                 profile_type=({self.updated_at})>"

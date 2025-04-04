@@ -22,7 +22,7 @@ async def login(
         session: AsyncSession = Depends(database_config.get_session)
     ):
     """Authenticate user on the plataform."""
-    return service.login(user_login_request, session)
+    return await service.login(user_login_request, session)
 
 # POST /register
 @user_router.post('/register', status_code=status.HTTP_201_CREATED)
@@ -31,7 +31,7 @@ async def register(
         session: AsyncSession = Depends(database_config.get_session)
     ):
     """Creates a new 'User Auth' and 'User' object with the provided data."""
-    return service.register(user_auth_request.__get_entity__(), session)
+    return await service.register(user_auth_request.__get_entity__(), session)
 
 # GET /user/{user_id}
 @user_router.get('/{user_id}', status_code=status.HTTP_200_OK)

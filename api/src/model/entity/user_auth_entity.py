@@ -19,25 +19,23 @@ class UserAuth(BaseEntity):
     password = Column(String(20), nullable=True)
     auth_token = Column(String(20), nullable=True)
     refresh_token = Column(String(20), nullable=True)
-    created_at = Column(TIMESTAMP)
     user = relationship("User", back_populates="user_auth")
 
     def __init__(self,
+                    user,
                     auth_type,
                     password=None,
                     auth_token=None,
-                    refresh_token=None,
-                    created_at=None):
+                    refresh_token=None):
+        self.user = user
         self.auth_type = auth_type
         self.password = password
         self.auth_token = auth_token
         self.refresh_token = refresh_token
-        self.created_at = created_at
 
     def __repr__(self):
         return f"<EntityUserAuth: user_id={self.user_id},\
                 auth_type={self.auth_type},\
                 password={self.password},\
                 auth_token={self.auth_token},\
-                refresh_token={self.refresh_token},\
-                created_at={self.created_at}>"
+                refresh_token={self.refresh_token}>"

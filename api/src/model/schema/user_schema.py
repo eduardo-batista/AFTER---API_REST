@@ -9,6 +9,7 @@ from pydantic import Field
 from api.src.model.entity.user_auth_entity import UserAuth
 from api.src.model.entity.user_entity import User
 from api.src.model.schema.base import BaseSchema
+from api.utils.auth import Auth
 
 class UserResponse(BaseSchema):
     """class for user schema."""
@@ -91,8 +92,9 @@ class CreateUserAuthRequest(CreateUserRequest):
                     fone=self.fone,
                     profile_type=self.profile_type)
         user_auth = UserAuth(
+            user=user,
             auth_type=self.auth_type,
-            password=self.password,
+            password=Auth.hash_password(self.password),
         )
         return user_auth
 

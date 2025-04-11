@@ -29,14 +29,11 @@ class DatabaseConfig:
 
     def get_database_url(self) -> str:
         """Construct and return the database URL."""
-        db_url = (
-            f"{self.config['db_type']}+{self.config['db_async_driver']}://"
-            f"{self.config['db_user']}:{self.config['db_password']}@"
-            f"{self.config['db_host']}"
-            f"{':' + self.config['db_port'] if self.config['db_port'] else ''}/"
-            f"{self.config['db_name']}"
+        return "{db_type}+{db_async_driver}://{db_user}:{db_password}@{db_host}{port}/{db_name}".format(
+            **self.config,
+            port=f":{self.config['db_port']}"
+            if self.config.get('db_port') else ""
         )
-        return db_url
 
     def get_async_engine(self) -> AsyncEngine:
         """Create and return an async SQLAlchemy engine."""

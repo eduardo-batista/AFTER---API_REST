@@ -6,16 +6,17 @@ This module defines the sqlalchemy class for user schema.
 from datetime import datetime
 from typing import Optional
 from pydantic import Field
-from api.src.model.entity.user_auth_entity import UserAuth
 from api.src.model.entity.user_entity import User
 from api.src.model.schema.base import BaseSchema
-from api.utils.auth import Auth
 
 class UserResponse(BaseSchema):
     """class for user schema."""
 
     id: Optional[int] = None
 
+    supabase_id: str = Field(...,
+        title='UUID de Referência do usuário no supabase', 
+    )
     name: str = Field(...,
         title='Nome do Usuário', 
     )
@@ -44,7 +45,7 @@ class UserResponse(BaseSchema):
         title='Data e Hora da última edição do usuário'
     )
 
-class CreateUserRequest(BaseSchema):
+class CreateUserWithPasswordRequest(BaseSchema):
     """class for user schema."""
 
     name: str = Field(...,
@@ -58,6 +59,9 @@ class CreateUserRequest(BaseSchema):
     )
     email: str = Field(...,
         title='Email do usuário'
+    )
+    password: str = Field(...,
+        title='Senha do Usuário', 
     )
     fone: str = Field(...,
         title='Telefone do usuário'
@@ -73,30 +77,6 @@ class CreateUserRequest(BaseSchema):
                     email=self.email,
                     fone=self.fone,
                     profile_type=self.profile_type)
-
-class CreateUserAuthRequest(CreateUserRequest):
-    """class for user auth schema."""
-
-    auth_type: str = Field(...,
-        title='Tipo de Login do usuário'
-    )
-    password: str = Field(...,
-        title='Senha do usuário'
-    )
-
-    def __get_entity__(self) -> UserAuth:
-        user = User(name=self.name,
-                    description=self.description,
-                    identification_document=self.identification_document,
-                    email=self.email,
-                    fone=self.fone,
-                    profile_type=self.profile_type)
-        user_auth = UserAuth(
-            user=user,
-            auth_type=self.auth_type,
-            password=Auth.hash_password(self.password),
-        )
-        return user_auth
 
 class UpdateUserRequest(BaseSchema):
     """class for user schema."""

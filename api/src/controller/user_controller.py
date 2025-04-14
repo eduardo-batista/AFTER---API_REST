@@ -7,9 +7,9 @@ from typing import Sequence
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.database.database import DatabaseConfig
-from api.src.model.schema.user_schema import CreateUserAuthRequest, UpdateUserRequest, UserLoginRequest, UserResponse, CreateUserRequest
+from api.src.model.schema.user_schema import UpdateUserRequest, UserLoginRequest, UserResponse, CreateUserWithPasswordRequest
 from api.src.service.user_service import UserService
+from api.infra.database.database import DatabaseConfig
 
 user_router = APIRouter(prefix='/user')
 database_config = DatabaseConfig()
@@ -23,15 +23,6 @@ async def login(
     ):
     """Authenticate user on the plataform."""
     return await service.login(user_login_request, session)
-
-# POST /register
-@user_router.post('/register', status_code=status.HTTP_201_CREATED)
-async def register(
-        user_auth_request: CreateUserAuthRequest, 
-        session: AsyncSession = Depends(database_config.get_session)
-    ):
-    """Creates a new 'User Auth' and 'User' object with the provided data."""
-    return await service.register(user_auth_request.__get_entity__(), session)
 
 # GET /user/{user_id}
 @user_router.get('/{user_id}', status_code=status.HTTP_200_OK)
@@ -53,11 +44,11 @@ async def get_all(
 # POST /user
 @user_router.post('/', status_code=status.HTTP_201_CREATED)
 async def create(
-        user_request: CreateUserRequest, 
+        user_request: CreateUserWithPasswordRequest, 
         session: AsyncSession = Depends(database_config.get_session)
     ) -> UserResponse:
     """Creates a new 'User' object with the provided data."""
-    return await service.create(user_request.__get_entity__(), session)
+    return await service.create(user_request.__get_entity__(), user_request.password, session)
 
 # PUT /user/{user_id}
 @user_router.put('/{user_id}', status_code=status.HTTP_200_OK)

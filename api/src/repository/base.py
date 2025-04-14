@@ -46,10 +46,13 @@ class BaseRepository(Generic[T]):
         Returns:
         - The object with the provided ID.
         """
-        query = select(self.entity).filter(getattr(self.entity, self.primary_key_name) == entity_id)
-        
-        result = await session.execute(query)
-        return result.scalars().first()
+        try:
+            query = select(self.entity).filter(getattr(self.entity, self.primary_key_name) == entity_id)
+            
+            result = await session.execute(query)
+            return result.scalars().first()
+        except Exception as e:
+            raise HTTPException(500, f'Erro ao buscar o registro: {str(e)}')
 
     async def get_all(self, session: AsyncSession) -> Sequence[T]:
         """
@@ -58,10 +61,13 @@ class BaseRepository(Generic[T]):
         Returns:
         - List of objects.
         """
-        query = select(self.entity).where(self.entity.active == True)
-        
-        result = await session.execute(query)
-        return result.scalars().all()
+        try:
+            query = select(self.entity).where(self.entity.active == True)
+            
+            result = await session.execute(query)
+            return result.scalars().all()
+        except Exception as e:
+            raise HTTPException(500, f'Erro ao buscar o registros: {str(e)}')
 
     async def create(self, obj_in: T, session: AsyncSession) -> T:
         """
@@ -73,11 +79,15 @@ class BaseRepository(Generic[T]):
         Returns:
         - The newly created object.
         """
-        
-        session.add(obj_in)
-        await session.commit()
-        await session.refresh(obj_in)
-        return obj_in
+        try:
+            session.add(obj_in)
+            await session.commit()
+            await session.refresh(obj_in)
+            return obj_in
+        except Exception as e:
+            print(e.__dict__)
+            await session.rollback()
+            raise HTTPException(500, f'Erro ao criar registro: {str(e)}')
 
     async def update(self, obj_in: T, entity_id: int, session: AsyncSession) -> T:
         """
@@ -90,22 +100,27 @@ class BaseRepository(Generic[T]):
         Returns:
         - The updated object.
         """
-        
-        query = select(self.entity).filter(
-            getattr(self.entity, self.primary_key_name) == entity_id
-        )
-        result = await session.execute(query)
-        obj = result.scalars().first()
+        try:
+            query = select(self.entity).filter(
+                getattr(self.entity, self.primary_key_name) == entity_id
+            )
+            result = await session.execute(query)
+            obj = result.scalars().first()
 
-        if not obj:
-            raise HTTPException(404, f'Não foi encontrado um registro com ID: {entity_id}.')
+            if not obj:
+                raise HTTPException(404, f'Não foi encontrado um registro com ID: {entity_id}.')
 
-        for key, value in obj_in.to_dict().items():
-            if key != self.primary_key_name and value:
-                setattr(obj, key, value)
-        await session.commit()
-        await session.refresh(obj)
-        return obj
+            for key, value in obj_in.to_dict().items():
+                if key != self.primary_key_name and value:
+                    setattr(obj, key, value)
+            await session.commit()
+            await session.refresh(obj)
+            return obj
+        except HTTPException:
+            raise
+        except Exception as e:
+            await session.rollback()
+            raise HTTPException(500, f'Erro ao atualizar registro: {str(e)}')
 
     async def soft_delete(self, entity_id: int, session: AsyncSession) -> None:
         """
@@ -117,19 +132,24 @@ class BaseRepository(Generic[T]):
         Returns:
         - No content.
         """
-        
-        query = select(self.entity).filter(
-            getattr(self.entity, self.primary_key_name) == entity_id
-        )
-        result = await session.execute(query)
-        obj = result.scalars().first()
+        try:
+            query = select(self.entity).filter(
+                getattr(self.entity, self.primary_key_name) == entity_id
+            )
+            result = await session.execute(query)
+            obj = result.scalars().first()
 
-        if not obj:
-            raise HTTPException(404, f'Não foi encontrado um registro com ID: {entity_id}.')
+            if not obj:
+                raise HTTPException(404, f'Não foi encontrado um registro com ID: {entity_id}.')
 
-        if obj:
-            obj.active = False
-            await session.commit()
+            if obj:
+                obj.active = False
+                await session.commit()
+        except HTTPException:
+            raise
+        except Exception as e:
+            await session.rollback()
+            raise HTTPException(500, f'Erro ao desativar registro: {str(e)}')
 
     async def delete(self, entity_id: int, session: AsyncSession) -> None:
         """
@@ -141,16 +161,21 @@ class BaseRepository(Generic[T]):
         Returns:
         - No content.
         """
-        
-        query = select(self.entity).filter(
-            getattr(self.entity, self.primary_key_name) == entity_id
-        )
-        result = await session.execute(query)
-        obj = result.scalars().first()
+        try:
+            query = select(self.entity).filter(
+                getattr(self.entity, self.primary_key_name) == entity_id
+            )
+            result = await session.execute(query)
+            obj = result.scalars().first()
 
-        if not obj:
-            raise HTTPException(404, f'Não foi encontrado um registro com ID: {entity_id}.')
+            if not obj:
+                raise HTTPException(404, f'Não foi encontrado um registro com ID: {entity_id}.')
 
-        if obj:
-            await session.delete(obj)
-            await session.commit()
+            if obj:
+                await session.delete(obj)
+                await session.commit()
+        except HTTPException:
+            raise
+        except Exception as e:
+            await session.rollback()
+            raise HTTPException(500, f'Erro ao excluir registro: {str(e)}')

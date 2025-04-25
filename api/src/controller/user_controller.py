@@ -11,7 +11,7 @@ from api.src.model.schema.user_schema import UpdateUserRequest, UserLoginRequest
 from api.src.service.user_service import UserService
 from api.infra.database.database import DatabaseConfig
 
-user_router = APIRouter(prefix='/user')
+user_router = APIRouter(prefix='/user',tags=["user"])
 database_config = DatabaseConfig()
 service = UserService()
 

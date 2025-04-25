@@ -3,8 +3,6 @@ user_service.py
 
 This module defines the sqlalchemy class for user service.
 """
-from datetime import datetime
-from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.src.model.entity.user_entity import User

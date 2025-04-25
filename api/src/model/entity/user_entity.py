@@ -6,6 +6,8 @@ This module defines the sqlalchemy class for user entity.
 from sqlalchemy import Column, Enum, String
 from .base import BaseEntity
 
+from sqlalchemy.orm import relationship
+
 class User(BaseEntity):
     """sqlalchemy class for user entity."""
 
@@ -18,6 +20,7 @@ class User(BaseEntity):
     email = Column(String(50), nullable=False, unique=True)
     fone = Column(String(20), nullable=True)
     profile_type = Column(Enum('user', 'admin', name='profile_type_enum'), nullable=False)
+    spaces = relationship("Space", back_populates="owner")
 
     def __init__(self, name = None, description = None, identification_document = None, email = None, fone = None, profile_type = None):
         self.name = name

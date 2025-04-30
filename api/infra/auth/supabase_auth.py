@@ -14,7 +14,7 @@ class SupabaseAuth(AuthProvider):
                 raise ValueError("SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY não encontrados.")
             self.client: Client = create_client(url, key)
         except Exception as e:
-            raise HTTPException(500, "Erro interno ao conectar ao Supabase.")
+            raise HTTPException(500, f"Erro interno ao conectar ao Supabase: {str(e)}")
 
     def sign_up(self, email: str, password: str) -> str:
         """Create a Supabase user and return its ID (UUID)"""

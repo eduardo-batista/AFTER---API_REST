@@ -20,6 +20,7 @@ class Space(BaseEntity):
     longitude = Column(DECIMAL, nullable=False)
     host_id = Column(Integer(), ForeignKey("users.id", ondelete="RESTRICT"), nullable=False)
     owner = relationship("User", back_populates="spaces")
+    events = relationship("Event", back_populates="space")
 
     def __init__(self, 
                 name = None,

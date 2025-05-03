@@ -21,6 +21,7 @@ class User(BaseEntity):
     fone = Column(String(20), nullable=True)
     profile_type = Column(Enum('user', 'admin', name='profile_type_enum'), nullable=False)
     spaces = relationship("Space", back_populates="owner")
+    events = relationship("Event", back_populates="host")
 
     def __init__(self, name = None, description = None, identification_document = None, email = None, fone = None, profile_type = None):
         self.name = name

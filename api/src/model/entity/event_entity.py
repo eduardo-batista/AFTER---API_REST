@@ -31,20 +31,16 @@ class Event(BaseEntity):
                 start = None, 
                 end = None, 
                 ticket_price = None, 
-                host_id = None, 
-                host = None, 
-                space_id = None, 
-                space = None):
-        name = name
-        description = description
-        image = image
-        start = start
-        end = end
-        ticket_price = ticket_price
-        host_id = host_id
-        host = host
-        space_id = space_id
-        space = space
+                host_id = None,
+                space_id = None):
+        self.name = name
+        self.description = description
+        self.image = image
+        self.start = start
+        self.end = end
+        self.ticket_price = ticket_price
+        self.host_id = host_id
+        self.space_id = space_id
 
     def __repr__(self):
         return f"<EntityEvent: id=({self.id}), \

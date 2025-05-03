@@ -8,9 +8,11 @@ from fastapi import FastAPI
 
 from api.src.controller.user_controller import user_router
 from api.src.controller.space_controller import space_router
+from api.src.controller.event_controller import event_router
 
 app = FastAPI(
     openapi_tags=[
+        {"name": "event", "description": "Gerenciamento de eventos."},
         {"name": "space", "description": "Gerenciamento de espaços."},
         {"name": "user", "description": "Gerenciamento de Usuários."}
     ]
@@ -18,6 +20,7 @@ app = FastAPI(
 
 app.include_router(user_router)
 app.include_router(space_router)
+app.include_router(event_router)
 
 app.add_middleware(
     CORSMiddleware,

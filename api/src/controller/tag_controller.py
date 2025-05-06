@@ -39,7 +39,7 @@ async def create(
         session: AsyncSession = Depends(database_config.get_session)
     ) -> TagResponse:
     """Creates a new 'Tag' object with the provided data."""
-    return await service.create(tag_request.__get_entity__(), session)
+    return await service.create(tag_request, session)
 
 # PUT /tag/{tag_id}
 @tag_router.put('/{tag_id}', status_code=status.HTTP_200_OK)
@@ -49,7 +49,7 @@ async def update(
         session: AsyncSession = Depends(database_config.get_session)
     ) -> TagResponse:
     """Updates an existing 'Tag' object with the provided data."""
-    return await service.update(tag_request.__get_entity__(), tag_id, session)
+    return await service.update(tag_request, tag_id, session)
 
 # DELETE /tag/{tag_id}
 @tag_router.delete('/{tag_id}', status_code=status.HTTP_204_NO_CONTENT)

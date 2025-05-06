@@ -39,7 +39,7 @@ async def create(
         session: AsyncSession = Depends(database_config.get_session)
     ) -> SpaceResponse:
     """Creates a new 'Space' object with the provided data."""
-    return await service.create(space_request.__get_entity__(), session)
+    return await service.create(space_request, session)
 
 # PUT /space/{space_id}
 @space_router.put('/{space_id}', status_code=status.HTTP_200_OK)
@@ -49,7 +49,7 @@ async def update(
         session: AsyncSession = Depends(database_config.get_session)
     ) -> SpaceResponse:
     """Updates an existing 'Space' object with the provided data."""
-    return await service.update(space_request.__get_entity__(), space_id, session)
+    return await service.update(space_request, space_id, session)
 
 # DELETE /space/{space_id}
 @space_router.delete('/{space_id}', status_code=status.HTTP_204_NO_CONTENT)

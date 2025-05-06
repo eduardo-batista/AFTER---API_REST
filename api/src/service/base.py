@@ -46,7 +46,7 @@ class BaseService(Generic[R, T, S]):
         entities = await self.repository.get_all(session)
         return [self.schema.model_validate(entity) for entity in entities]
 
-    async def create(self, obj_in: T, session: AsyncSession) -> S:
+    async def create(self, obj_in: BaseSchema, session: AsyncSession) -> S:
         """
         Creates a new object with the provided data.
 
@@ -56,10 +56,10 @@ class BaseService(Generic[R, T, S]):
         Returns:
         - The newly created object.
         """
-        entity = await self.repository.create(obj_in, session)
+        entity = await self.repository.create(obj_in.__get_entity__(), session)
         return self.schema.model_validate(entity)
 
-    async def update(self, obj_in: T, entity_id: int, session: AsyncSession) -> S:
+    async def update(self, obj_in: BaseSchema, entity_id: int, session: AsyncSession) -> S:
         """
         Updates an existing object with the provided data.
 
@@ -70,7 +70,7 @@ class BaseService(Generic[R, T, S]):
         Returns:
         - The updated object.
         """
-        entity = await self.repository.update(obj_in, entity_id, session)
+        entity = await self.repository.update(obj_in.__get_entity__(), entity_id, session)
         return self.schema.model_validate(entity)
 
     async def delete(self, entity_id: int, session: AsyncSession) -> None:

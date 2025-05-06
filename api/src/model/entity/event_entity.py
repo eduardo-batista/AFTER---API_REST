@@ -7,6 +7,7 @@ from sqlalchemy import Column, Date, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from .base import BaseEntity
+from .associations import event_tags
 
 class Event(BaseEntity):
     """sqlalchemy class for event entity."""
@@ -21,6 +22,7 @@ class Event(BaseEntity):
     ticket_price = Column(Float(), nullable=True)
     host_id = Column(Integer(), ForeignKey("users.id", ondelete="RESTRICT"), nullable=False)
     space_id = Column(Integer(), ForeignKey("spaces.id", ondelete="RESTRICT"), nullable=False)
+    tags = relationship("Tag", secondary=event_tags, back_populates="events")
     host = relationship("User", back_populates="events")
     space = relationship("Space", back_populates="events")
 

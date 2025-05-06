@@ -6,7 +6,7 @@ This module defines the sqlalchemy class for user service.
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.src.model.entity.user_entity import User
-from api.src.model.schema.user_schema import UserLoginRequest, UserResponse
+from api.src.model.schema.user_schema import CreateUserWithPasswordRequest, UserLoginRequest, UserResponse
 from api.src.repository.user_repository import UserRepository
 from api.src.service.auth_service import AuthService
 from .base import BaseService
@@ -26,7 +26,7 @@ class UserService(BaseService[UserRepository, User, UserResponse]):
             'acess_token': token
         }
 
-    async def create(self, user: User, password: str, session: AsyncSession) -> UserResponse:
+    async def create(self, user: CreateUserWithPasswordRequest, session: AsyncSession) -> UserResponse:
         """
         Creates a new object with the provided data.
 
@@ -36,9 +36,10 @@ class UserService(BaseService[UserRepository, User, UserResponse]):
         Returns:
         - The newly created object.
         """
-        supabase_id = await self.auth_service.register_user(user.__getattribute__('email'), password)
+        supabase_id = await self.auth_service.register_user(user.__getattribute__('email'), user.__getattribute__('password'))
 
-        user.__setattr__('supabase_id', supabase_id)
+        obj_in = user.__get_entity__()
+        obj_in.__setattr__('supabase_id', supabase_id)
 
-        entity = await self.repository.create(user, session)
+        entity = await self.repository.create(obj_in, session)
         return self.schema.model_validate(entity)

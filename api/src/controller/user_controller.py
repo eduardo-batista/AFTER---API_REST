@@ -48,7 +48,7 @@ async def create(
         session: AsyncSession = Depends(database_config.get_session)
     ) -> UserResponse:
     """Creates a new 'User' object with the provided data."""
-    return await service.create(user_request.__get_entity__(), user_request.password, session)
+    return await service.create(user_request, session)
 
 # PUT /user/{user_id}
 @user_router.put('/{user_id}', status_code=status.HTTP_200_OK)
@@ -58,7 +58,7 @@ async def update(
         session: AsyncSession = Depends(database_config.get_session)
     ) -> UserResponse:
     """Updates an existing 'User' object with the provided data."""
-    return await service.update(user_request.__get_entity__(), user_id, session)
+    return await service.update(user_request, user_id, session)
 
 # DELETE /user/{user_id}
 @user_router.delete('/{user_id}', status_code=status.HTTP_204_NO_CONTENT)

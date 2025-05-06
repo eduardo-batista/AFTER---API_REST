@@ -39,7 +39,7 @@ async def create(
         session: AsyncSession = Depends(database_config.get_session)
     ) -> EventResponse:
     """Creates a new 'Event' object with the provided data."""
-    return await service.create(event_request.__get_entity__(), session)
+    return await service.create(event_request, session)
 
 # PUT /event/{event_id}
 @event_router.put('/{event_id}', status_code=status.HTTP_200_OK)
@@ -49,7 +49,7 @@ async def update(
         session: AsyncSession = Depends(database_config.get_session)
     ) -> EventResponse:
     """Updates an existing 'Event' object with the provided data."""
-    return await service.update(event_request.__get_entity__(), event_id, session)
+    return await service.update(event_request, event_id, session)
 
 # DELETE /event/{event_id}
 @event_router.delete('/{event_id}', status_code=status.HTTP_204_NO_CONTENT)

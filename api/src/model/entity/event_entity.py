@@ -25,6 +25,7 @@ class Event(BaseEntity):
     tags = relationship("Tag", secondary=event_tags, back_populates="events")
     host = relationship("User", back_populates="events")
     space = relationship("Space", back_populates="events")
+    reviews = relationship("EventReview", back_populates="event")
 
     def __init__(self, 
                 name = None, 

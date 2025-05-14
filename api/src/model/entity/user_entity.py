@@ -4,10 +4,10 @@ user_entity.py
 This module defines the sqlalchemy class for user entity.
 """
 from sqlalchemy import Column, Enum, String
-from .base import BaseEntity
-
 from sqlalchemy.orm import relationship
 
+from .base import BaseEntity
+from .associations import attendance_confirmations
 class User(BaseEntity):
     """sqlalchemy class for user entity."""
 
@@ -22,6 +22,7 @@ class User(BaseEntity):
     profile_type = Column(Enum('user', 'admin', name='profile_type_enum'), nullable=False)
     spaces = relationship("Space", back_populates="owner")
     events = relationship("Event", back_populates="host")
+    attendance_confirmations = relationship("Event", secondary=attendance_confirmations, back_populates="attendance_confirmations")
 
     def __init__(self, name = None, description = None, identification_document = None, email = None, fone = None, profile_type = None):
         self.name = name

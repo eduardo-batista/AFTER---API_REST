@@ -7,7 +7,7 @@ from sqlalchemy import Column, Date, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from .base import BaseEntity
-from .associations import event_tags
+from .associations import event_tags, attendance_confirmations
 
 class Event(BaseEntity):
     """sqlalchemy class for event entity."""
@@ -25,6 +25,7 @@ class Event(BaseEntity):
     tags = relationship("Tag", secondary=event_tags, back_populates="events")
     host = relationship("User", back_populates="events")
     space = relationship("Space", back_populates="events")
+    attendance_confirmations = relationship("User", secondary=attendance_confirmations, back_populates="attendance_confirmations")
 
     def __init__(self, 
                 name = None, 

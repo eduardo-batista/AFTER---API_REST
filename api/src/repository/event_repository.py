@@ -30,7 +30,7 @@ class EventRepository(BaseRepository[Event]):
         """
         try:
             query = select(self.entity)\
-            .options(selectinload(self.entity.space))\
+            .options(selectinload(self.entity.space), selectinload(self.entity.host))\
             .filter(getattr(self.entity, self.primary_key_name) == entity_id)
             
             result = await session.execute(query)

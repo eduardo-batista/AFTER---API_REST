@@ -6,9 +6,11 @@ This module defines the sqlalchemy class for event schema.
 from datetime import datetime
 from typing import Optional
 from pydantic import Field
+
 from api.src.model.entity.event_entity import Event
 from api.src.model.schema.base import BaseSchema
 from api.src.model.schema.space_schema import SpaceResponse
+from api.src.model.schema.user_schema import UserResponse
 
 class EventResponse(BaseSchema):
     """class for event schema."""
@@ -47,6 +49,9 @@ class EventResponse(BaseSchema):
     )
     updated_at: datetime = Field(...,
         title='Data e Hora da última edição do Evento'
+    )
+    host: UserResponse = Field(...,
+        title='Usuário organizador do evento'
     )
     space: SpaceResponse = Field(...,
         title='Espaço sede do evento'

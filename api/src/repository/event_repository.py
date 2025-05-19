@@ -47,7 +47,7 @@ class EventRepository(BaseRepository[Event]):
         """
         try:
             query = select(self.entity)\
-            .options(selectinload(self.entity.space))\
+            .options(selectinload(self.entity.space), selectinload(self.entity.host))\
             .where(self.entity.active == True)
             
             result = await session.execute(query)

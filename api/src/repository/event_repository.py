@@ -5,7 +5,7 @@ This module defines the sqlalchemy class for event repository.
 """
 from typing import Sequence, Type
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import inspect, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -20,7 +20,7 @@ class EventRepository(BaseRepository[Event]):
     
     async def get(self, entity_id: int, session: AsyncSession) -> Event | None:
         """
-        Retrieves an object based on the provided ID.
+        Retrieves an object and your relationships based on the provided ID.
 
         Args:
         - entity_id (int): The ID of the object to retrieve.
@@ -29,12 +29,19 @@ class EventRepository(BaseRepository[Event]):
         - The object with the provided ID.
         """
         try:
-            query = select(self.entity)\
-            .options(selectinload(self.entity.space), selectinload(self.entity.host))\
-            .filter(getattr(self.entity, self.primary_key_name) == entity_id)
-            
+            entity_inspector = inspect(self.entity)
+            relationship_keys = [
+                relationship.key for relationship in entity_inspector.relationships
+            ]
+
+            query = select(self.entity)
+            for relationship_key in relationship_keys:
+                relationship_attribute = getattr(self.entity, relationship_key)
+                query = query.options(selectinload(relationship_attribute))
+            query = query.where(self.entity.id == entity_id)
+
             result = await session.execute(query)
-            return result.scalars().first()
+            return result.scalar_one_or_none()
         except Exception as e:
             raise HTTPException(500, f'Erro ao buscar o registro: {str(e)}')
 

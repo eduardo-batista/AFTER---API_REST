@@ -50,6 +50,9 @@ class EventResponse(BaseSchema):
     updated_at: datetime = Field(...,
         title='Data e Hora da última edição do Evento'
     )
+    
+class EventWithRelationshipsResponse(EventResponse):
+    """class for event schema with relationships."""
     host: UserResponse = Field(...,
         title='Usuário organizador do evento'
     )

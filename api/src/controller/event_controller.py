@@ -7,7 +7,7 @@ from typing import Sequence
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.src.model.schema.event_schema import UpdateEventRequest, EventResponse, CreateEventRequest
+from api.src.model.schema.event_schema import EventWithRelationshipsResponse, UpdateEventRequest, EventResponse, CreateEventRequest
 from api.src.service.event_service import EventService
 from api.infra.database.database import DatabaseConfig
 
@@ -20,7 +20,7 @@ service = EventService()
 async def get(
         event_id: int, 
         session: AsyncSession = Depends(database_config.get_session)
-    ) -> EventResponse | None:
+    ) -> EventWithRelationshipsResponse | None:
     """Retrieves an 'Event' object based on the provided ID."""
     return await service.get(event_id, session)
 
@@ -28,7 +28,7 @@ async def get(
 @event_router.get('/', status_code=status.HTTP_200_OK)
 async def get_all(
         session: AsyncSession = Depends(database_config.get_session)
-    ) -> Sequence[EventResponse]:
+    ) -> Sequence[EventWithRelationshipsResponse]:
     """Retrieves all 'Event' objects."""
     return await service.get_all(session)
 

@@ -53,4 +53,6 @@ class Event(BaseEntity):
                 end=({self.end}), \
                 ticket_price=({self.ticket_price}), \
                 host_id=({self.host_id}), \
-                space_id=({self.space_id})>"
+                host_id=({self.host.name}), \
+                space_id=({self.space_id}), \
+                host_id=({self.space.name})>"
